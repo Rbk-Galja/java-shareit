@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NoAccessException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -20,11 +19,13 @@ import java.util.List;
 @Service
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    @Autowired
     ItemRepository itemRepository;
-
-    @Autowired
     UserService userService;
+
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService) {
+        this.itemRepository = itemRepository;
+        this.userService = userService;
+    }
 
     @Override
     public ItemDto getById(long id) {
