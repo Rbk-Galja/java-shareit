@@ -1,10 +1,8 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.validator.UpdateValidate;
 
 /**
@@ -12,14 +10,11 @@ import ru.practicum.shareit.validator.UpdateValidate;
  */
 @Data
 @Builder
-public class Item {
+public class User {
     @NotNull(groups = {UpdateValidate.class})
     long id;
-    String name;
-    String description;
-    Boolean available;
-    User owner;
 
-    @JsonIgnore
-    Long request;
+    String name;
+    String email;
+
 }
