@@ -1,7 +1,10 @@
 package ru.practicum.shareit.exception;
 
-public class DuplicatedDataException extends IllegalArgumentException {
+import org.springframework.dao.DataIntegrityViolationException;
+
+public class DuplicatedDataException extends DataIntegrityViolationException {
     public DuplicatedDataException(String message) {
         super(message);
     }
+
 }

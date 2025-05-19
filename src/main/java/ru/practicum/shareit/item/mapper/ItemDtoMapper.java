@@ -2,12 +2,15 @@ package ru.practicum.shareit.item.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewItemRequest;
-import ru.practicum.shareit.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.booking.mapper.BookingDtoMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.mapper.UserDtoMapper;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemDtoMapper {
@@ -18,16 +21,7 @@ public final class ItemDtoMapper {
                 .description(request.getDescription())
                 .available(request.getAvailable())
                 .owner(owner)
-                .request(request.getRequest() != null ? request.getRequest().getId() : null)
-                .build();
-    }
-
-    public static Item mapToItem(ItemDto itemDto) {
-        return Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .owner(UserDtoMapper.mapToUser(itemDto.getOwner()))
+                .request(request.getRequest())
                 .build();
     }
 
@@ -52,5 +46,22 @@ public final class ItemDtoMapper {
             item.setAvailable(request.getAvailable());
         }
         return item;
+    }
+
+    public static ItemDtoBooking mapToItemDtoBooking(Item item, List<Booking> bookings, List<Comment> comments) {
+        ItemDtoBooking itemDtoBooking = ItemDtoBooking.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .comments(comments.stream().map(CommentDtoMapper::mapToDto).toList())
+                .build();
+        if (!bookings.isEmpty()) {
+            itemDtoBooking.setLastBooking(BookingDtoMapper.mapToBookingDto(bookings.getLast()));
+            if (bookings.size() > 1) {
+                itemDtoBooking.setNextBooking(BookingDtoMapper.mapToBookingDto(bookings.get(bookings.size() - 2)));
+            }
+        }
+        return itemDtoBooking;
     }
 }
