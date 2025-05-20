@@ -7,8 +7,7 @@ email varchar UNIQUE NOT NULL
 CREATE TABLE IF NOT EXISTS request (
 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 description varchar NOT NULL,
-requestor_id BIGINT,
-CONSTRAINT users FOREIGN KEY(requestor_id) REFERENCES users (id)
+requestor_id BIGINT REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS items (
@@ -16,30 +15,23 @@ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 name varchar NOT NULL,
 description varchar NOT NULL,
 available boolean,
-owner_id BIGINT,
-request_id BIGINT,
-CONSTRAINT users FOREIGN KEY (owner_id) REFERENCES users (id),
-CONSTRAINT itemRequest FOREIGN KEY (request_id) REFERENCES request (id)
+owner_id BIGINT REFERENCES users (id),
+request_id BIGINT REFERENCES request (id)
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 start_time TIMESTAMP WITHOUT TIME ZONE,
 end_time TIMESTAMP WITHOUT TIME ZONE,
-item_id BIGINT,
-booker_id BIGINT,
-status varchar,
-CONSTRAINT items FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE,
-CONSTRAINT users FOREIGN KEY (booker_id) REFERENCES users (id) ON DELETE CASCADE
+item_id BIGINT REFERENCES items (id) ON DELETE CASCADE,
+booker_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
+status varchar
 );
 
 CREATE TABLE IF NOT EXISTS comments (
 id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 text varchar,
-item_id BIGINT,
-author_id BIGINT,
-created TIMESTAMP WITHOUT TIME ZONE,
-CONSTRAINT items FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE,
-CONSTRAINT users FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
+item_id BIGINT REFERENCES items (id) ON DELETE CASCADE,
+author_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
+created TIMESTAMP WITHOUT TIME ZONE
 );
-
