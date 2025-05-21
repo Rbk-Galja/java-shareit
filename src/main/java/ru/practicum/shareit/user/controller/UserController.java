@@ -50,8 +50,8 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public boolean deleteUser(@PathVariable("userId") long userId) {
-        return userService.deleteUser(userId);
+    public void deleteUser(@PathVariable("userId") long userId) {
+        userService.deleteUser(userId);
     }
 
 

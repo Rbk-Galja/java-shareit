@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewItemRequest;
-import ru.practicum.shareit.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validator.UpdateValidate;
 
@@ -22,9 +20,17 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                 @PathVariable("itemId") long itemId,
+                                 @RequestBody @Validated(UpdateValidate.class) NewCommentRequest request) {
+        return itemService.addComment(request, itemId, userId);
+    }
+
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto getById(@PathVariable("itemId") long itemId) {
+    public ItemDtoBooking getById(@PathVariable("itemId") long itemId) {
         return itemService.getById(itemId);
     }
 

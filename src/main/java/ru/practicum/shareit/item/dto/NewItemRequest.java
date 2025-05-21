@@ -17,5 +17,6 @@ public class NewItemRequest {
 
     @NotNull(message = "не установлен статус доступности для бронирования")
     private Boolean available;
+
     private ItemRequest request;
 }
