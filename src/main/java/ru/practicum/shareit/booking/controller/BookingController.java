@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.OK)
     public BookingDto updateStatus(@RequestHeader("X-Sharer-User-Id") long userId,
                                    @PathVariable("bookingId") long bookingId,
-                                   @RequestParam(name = "approved") boolean approved) {
+                                   @RequestParam boolean approved) {
         return bookingService.updateStatus(userId, bookingId, approved);
     }
 
@@ -50,14 +51,14 @@ public class BookingController {
     @GetMapping("?state={state}")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> findByBookerId(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestParam(name = "state", defaultValue = "ALL") String state) {
+                                           @RequestParam(defaultValue = "ALL") State state) {
         return bookingService.findByBookerId(userId, state);
     }
 
     @GetMapping("/{owner}?state={state}")
     @RequestMapping(path = "/bookings/{owner}?state={state}", method = RequestMethod.GET)
     public List<BookingDto> findByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @RequestParam(name = "state", defaultValue = "ALL") String state) {
+                                          @RequestParam(defaultValue = "ALL") State state) {
         return bookingService.findByOwnerId(userId, state);
     }
 }

@@ -2,10 +2,12 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.mapper.BookingDtoMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NoAccessException;
@@ -30,7 +32,8 @@ public class BookingServiceImpl implements BookingService {
     ItemRepository itemRepository;
     UserRepository userRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository,
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              ItemRepository itemRepository,
                               UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.itemRepository = itemRepository;
@@ -53,6 +56,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto add(NewBookingRequest request, long bookerId) {
         log.info("Начинаем создание бронирования предмета id = {}", request.getItemId());
         User booker = userRepository.findById(bookerId)
@@ -71,6 +75,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto updateStatus(long userId, long id, boolean approved) {
         log.info("Начинаем обновление статуса бронирования id = {}", id);
         Booking booking = bookingRepository.findById(id)
@@ -104,8 +109,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findByBookerId(long bookerId, String state) {
-        log.info("Начинаем получение всех бронирований для пользователя id = {}", bookerId);
+    public List<BookingDto> findByBookerId(long bookerId, State state) {
+        log.info("Начинаем получение всех бронирований для пользователя id = {} по запросу {}", bookerId, state);
         List<BookingDto> bookings = bookingRepository.findByBooker_id(bookerId).stream()
                 .map(BookingDtoMapper::mapToBookingDto)
                 .toList();
@@ -113,28 +118,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findByOwnerId(long ownerId, String state) {
-        log.info("Начинаем получение всех бронирований для всех вещей пользователя id = {}", ownerId);
+    public List<BookingDto> findByOwnerId(long ownerId, State state) {
+        log.info("Начинаем получение всех бронирований для всех вещей пользователя id = {} по запросу {}", ownerId, state);
         List<BookingDto> bookings = bookingRepository.findByItemOwner_id(ownerId).stream()
                 .map(BookingDtoMapper::mapToBookingDto)
                 .toList();
         return checkState(bookings, state);
     }
 
-    private List<BookingDto> checkState(List<BookingDto> bookings, String state) {
+    private List<BookingDto> checkState(List<BookingDto> bookings, State state) {
+        if (state == null) {
+            log.error("Некорректный запрос сортировки");
+            throw new ParameterNotValidException("Введен некорректный запрос");
+        }
         return switch (state) {
-            case "CURRENT" -> bookings.stream().filter(booking -> booking.getStatus().equals(Status.APPROVED)).toList();
-            case "PAST" -> bookings.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).toList();
-            case "FUTURE" ->
+            case State.CURRENT -> bookings.stream().filter(booking -> booking.getStatus().equals(Status.APPROVED)).toList();
+            case State.PAST -> bookings.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).toList();
+            case State.FUTURE ->
                     bookings.stream().filter(booking -> booking.getStart().isAfter(LocalDateTime.now())).toList();
-            case "WAITING" -> bookings.stream().filter(booking -> booking.getStatus().equals(Status.WAITING)).toList();
-            case "REJECTED" ->
+            case State.WAITING -> bookings.stream().filter(booking -> booking.getStatus().equals(Status.WAITING)).toList();
+            case State.REJECTED ->
                     bookings.stream().filter(booking -> booking.getStatus().equals(Status.REJECTED)).toList();
-            case "ALL" -> bookings;
-            default -> {
-                log.error("Некорректный запрос сортировки: {}", state);
-                throw new ParameterNotValidException("Введен некорректный запрос");
-            }
+            case State.ALL -> bookings;
         };
     }
 }

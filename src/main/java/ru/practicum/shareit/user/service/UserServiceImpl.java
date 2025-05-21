@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @Slf4j
@@ -33,6 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = DuplicatedDataException.class)
     public UserDto add(NewUserRequest request) throws DuplicatedDataException {
         log.info("Началось создание пользователя {}", request);
         User user = UserDtoMapper.mapToUserAdd(request);
@@ -44,19 +44,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto update(long id, UpdateUserRequest request) {
+    @Transactional(rollbackFor = DuplicatedDataException.class)
+    public UserDto update(long id, UpdateUserRequest request) throws DuplicatedDataException {
         log.info("Началось обновление пользователя id {}", id);
         User oldUser = UserDtoMapper.mapToUser(getById(id));
         User updateUser = UserDtoMapper.mapToUserUpdate(oldUser, request);
-        try {
-            updateUser = userRepository.save(updateUser);
-            log.info("Обновление пользователя {} завершено", updateUser);
-        } catch (DataIntegrityViolationException e) {
-            if (checkEmailException(e)) {
-                log.error("Указанный при обновлении email {} уже используется", request.getEmail());
-                throw new DuplicatedDataException("Данный email уже используется");
-            }
-        }
+        updateUser = userRepository.save(updateUser);
+        log.info("Обновление пользователя {} завершено", updateUser);
         return UserDtoMapper.mapToUserDto(updateUser);
     }
 
@@ -69,6 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(long id) {
         log.info("Началось удаление пользователя id = {}", id);
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -77,10 +72,5 @@ public class UserServiceImpl implements UserService {
             userRepository.delete(user);
             log.info("Удаление пользователя id = {} прошло успешно", id);
         }
-    }
-
-    private boolean checkEmailException(DataIntegrityViolationException e) {
-        return e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException")
-                && ((SQLException) e.getMostSpecificCause()).getSQLState().equals("23505");
     }
 }

@@ -51,6 +51,7 @@ public class Booking {
     User booker;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     Status status;
 
 }

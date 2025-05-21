@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -42,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDtoBooking getById(long itemId) {
         log.info("Начинаем получение предмета с id {}", itemId);
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
@@ -63,6 +65,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto add(long userId, NewItemRequest request) {
         log.info("Начинаем создание предмета {}", request);
         User owner = UserDtoMapper.mapToUser(userService.getById(userId));
@@ -74,6 +77,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(long userId, long idItem, UpdateItemRequest request) {
         log.info("Началось обновление вещи id = {}", idItem);
         Item oldItem = itemRepository.findById(idItem).orElseThrow(() -> new NotFoundException("Предмет не найден"));
@@ -102,6 +106,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto addComment(NewCommentRequest request, long itemId, long userId) {
         log.info("Начинаем добавление комментария {}", request);
         Booking booking = bookingRepository.findByItem_idAndBooker_id(itemId, userId);
