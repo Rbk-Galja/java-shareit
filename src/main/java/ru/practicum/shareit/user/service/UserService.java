@@ -15,5 +15,5 @@ public interface UserService {
 
     UserDto getById(long id);
 
-    boolean deleteUser(long id);
+    void deleteUser(long id);
 }
