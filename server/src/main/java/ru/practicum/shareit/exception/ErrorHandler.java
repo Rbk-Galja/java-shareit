@@ -11,21 +11,24 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ErrorHandler {
 
+    //бронирование недоступно
+    @ExceptionHandler(NotAvailableItemException.class)
+    public ResponseEntity<String> handleNotValid(final NotAvailableItemException ex) {
+        return response("Бронирование не доступно", ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    //ошибки валидации Lombook
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleNotValid(final ConstraintViolationException ex) {
         return response("Указаны некорректные данные", ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicatedDataException.class)
-    public ResponseEntity<String> handleConflict(final DuplicatedDataException ex) {
-        return response("Указанный email уже используется", ex.getMessage(), HttpStatus.CONFLICT);
+    public ResponseEntity<String> handleDuplicateEmail(DuplicatedDataException e) {
+        return response("Email уже используется", e.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(ParameterNotValidException.class)
-    public ResponseEntity<String> handleIncorrectPost(final ParameterNotValidException e) {
-        return response("Введите запрос для поиска", e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
+    //ошибки валидации данных
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -54,6 +57,7 @@ public class ErrorHandler {
         return new ErrorResponse("Access denied", e.getMessage());
     }
 
+    //ошибка добавления комментария, если условия по бронированию не соблюдены
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponse handleNoAccessToComment(final NoAccessAddCommentException e) {

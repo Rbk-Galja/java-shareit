@@ -218,4 +218,10 @@ public class ItemControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Item not found")));
     }
+
+    @DisplayName("Добавление комментария без бронирования")
+    @Test
+    void addCommentWithoutBooking() {
+
+    }
 }

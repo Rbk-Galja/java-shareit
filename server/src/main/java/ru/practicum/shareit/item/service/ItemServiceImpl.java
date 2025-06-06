@@ -87,9 +87,9 @@ public class ItemServiceImpl implements ItemService {
         Item oldItem = itemRepository.findById(idItem).orElseThrow(() -> new NotFoundException("Предмет не найден"));
         if (userId == oldItem.getOwner().getId()) {
             Item updateItem = ItemDtoMapper.mapToDtoUpdate(oldItem, request);
-            updateItem = itemRepository.save(updateItem);
-            log.info("Обновление предмета {} завершено", updateItem);
-            return ItemDtoMapper.mapToDto(updateItem);
+            Item result = itemRepository.save(updateItem);
+            log.info("Обновление предмета {} завершено", result);
+            return ItemDtoMapper.mapToDto(result);
         }
         log.error("У пользователя id = {} нет доступа к вещи id = {}", userId, idItem);
         throw new NoAccessException("Отказано в доступе к предмету");
@@ -127,8 +127,8 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Comment comment = CommentDtoMapper.mapToCommentAdd(request, item, author);
-        commentRepository.save(comment);
-        log.info("Создание комментария прошло успешно {}, комментарию присвоен id = {}", comment, comment.getText());
-        return CommentDtoMapper.mapToDto(comment);
+        Comment saved = commentRepository.save(comment);
+        log.info("Создание комментария прошло успешно {}, комментарию присвоен id = {}", saved, saved.getId());
+        return CommentDtoMapper.mapToDto(saved);
     }
 }

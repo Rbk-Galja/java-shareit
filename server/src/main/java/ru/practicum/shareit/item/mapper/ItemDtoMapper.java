@@ -31,6 +31,9 @@ public final class ItemDtoMapper {
     }
 
     public static ItemDto mapToDto(Item item) {
+        if (item == null) {
+            return null;
+        }
         ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())

@@ -11,6 +11,9 @@ import ru.practicum.shareit.user.dto.UserDto;
 public final class UserDtoMapper {
 
     public static UserDto mapToUserDto(User user) {
+        if (user == null) {
+            return null;
+        }
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -19,6 +22,9 @@ public final class UserDtoMapper {
     }
 
     public static User mapToUser(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
         return User.builder()
                 .id(userDto.getId())
                 .name(userDto.getName())

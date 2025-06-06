@@ -39,9 +39,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User requestor = UserDtoMapper.mapToUser(userService.getById(userId));
         log.info("Определен владелец запроса {}: {}", request, requestor);
         ItemRequest itemRequest = RequestDtoMapper.mapToRequestAdd(request, requestor);
-        itemRequestRepository.save(itemRequest);
-        log.info("Создание запроса {} прошло успешно, запросу присвоен id = {}", itemRequest, itemRequest.getId());
-        return RequestDtoMapper.mapToDto(itemRequest);
+        ItemRequest result = itemRequestRepository.save(itemRequest);
+        log.info("Создание запроса {} прошло успешно, запросу присвоен id = {}", result, result.getId());
+        return RequestDtoMapper.mapToDto(result);
     }
 
     @Override

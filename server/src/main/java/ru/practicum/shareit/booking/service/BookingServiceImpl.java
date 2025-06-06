@@ -15,7 +15,6 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NoAccessException;
 import ru.practicum.shareit.exception.NotAvailableItemException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ParameterNotValidException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -44,9 +43,9 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Предмет для бронирования не найден"));
         if (item.getAvailable()) {
             Booking booking = BookingDtoMapper.mapToBookingAdd(request, booker, item);
-            bookingRepository.save(booking);
-            log.info("Создание бронирования прошло успешно {}", booking);
-            return BookingDtoMapper.mapToBookingDto(booking);
+            Booking result = bookingRepository.save(booking);
+            log.info("Создание бронирования прошло успешно {}", result);
+            return BookingDtoMapper.mapToBookingDto(result);
         }
         log.error("Бронирование предмета недоступно");
         throw new NotAvailableItemException("Бронирование предмета недоступно");
@@ -106,10 +105,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<BookingDto> checkState(List<BookingDto> bookings, State state) {
-        if (state == null) {
-            log.error("Некорректный запрос сортировки");
-            throw new ParameterNotValidException("Введен некорректный запрос");
-        }
         return switch (state) {
             case State.CURRENT ->
                     bookings.stream().filter(booking -> booking.getStatus().equals(Status.APPROVED)).toList();
