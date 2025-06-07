@@ -39,23 +39,31 @@ public class BookingRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        owner = manager.persistFlushFind(User.builder().name("nameOwner").email("mail9@mail.ru").build());
-        itemForBooking = manager.persistFlushFind(Item.builder()
-                .name("уровень строиельный")
+        owner = manager.persist(User.builder().name("nameOwner").email("mail9@mail.ru").build());
+        itemForBooking = manager.persist(Item.builder()
+                .name("уровень строительный")
                 .description("строительный уровень 1м")
                 .available(true)
                 .owner(owner)
                 .build());
-        userBooker = manager.persistFlushFind(User.builder().name("nameBooker").email("mail24@mail.ru").build());
-        booking = manager.persistFlushFind(Booking.builder()
+        userBooker = manager.persist(User.builder().name("nameBooker").email("mail24@mail.ru").build());
+
+        // Сохраняем объекты по отдельности
+        itemForBooking = manager.merge(itemForBooking);
+        userBooker = manager.merge(userBooker);
+
+        booking = Booking.builder()
                 .start(LocalDateTime.now())
                 .end(LocalDateTime.now())
                 .item(itemForBooking)
                 .booker(userBooker)
                 .status(Status.WAITING)
-                .build());
+                .build();
 
+        booking = manager.persist(booking);
+        manager.flush();
     }
+
 
     @DisplayName("Получение бронирования по id забронировавшего пользователя")
     @Test

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
                                  @PathVariable("itemId") long itemId,
-                                 @RequestBody @Valid NewCommentRequest request) {
+                                 @RequestBody NewCommentRequest request) {
         return itemService.addComment(request, itemId, userId);
     }
 
@@ -44,7 +43,7 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                              @RequestBody @Valid NewItemRequest request) {
+                              @RequestBody NewItemRequest request) {
         return itemService.add(userId, request);
     }
 
@@ -52,7 +51,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
                               @PathVariable("itemId") long itemId,
-                              @RequestBody @Valid UpdateItemRequest request) {
+                              @RequestBody UpdateItemRequest request) {
         return itemService.update(userId, itemId, request);
     }
 

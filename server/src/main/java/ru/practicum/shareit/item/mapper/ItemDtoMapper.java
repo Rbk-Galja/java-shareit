@@ -12,8 +12,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.mapper.RequestDtoMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.mapper.UserDtoMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 

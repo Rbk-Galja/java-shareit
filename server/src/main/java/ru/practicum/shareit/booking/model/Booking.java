@@ -6,13 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validator.UpdateValidate;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Entity
 @Table(name = "bookings")
 @Data
@@ -33,7 +29,6 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(groups = {UpdateValidate.class})
     Long id;
 
     @Column(name = "start_time")
