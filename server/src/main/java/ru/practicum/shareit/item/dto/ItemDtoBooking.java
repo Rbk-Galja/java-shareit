@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class ItemDtoBooking {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long id;
+    private Long id;
 
     private String name;
     private String description;

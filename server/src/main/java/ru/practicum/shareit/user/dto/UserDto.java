@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class UserDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long id;
+    private Long id;
 
     @NotBlank
     private String name;

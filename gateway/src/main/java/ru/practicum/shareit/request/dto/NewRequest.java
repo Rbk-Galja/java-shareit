@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class NewRequest {
     @NotBlank
-    @NotNull
     String description;
 
     public NewRequest() {

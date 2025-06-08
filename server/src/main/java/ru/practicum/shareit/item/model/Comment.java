@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.user.model.User;
@@ -30,7 +29,6 @@ public class Comment {
     Long id;
 
     @Column(name = "text")
-    @NotBlank
     String text;
 
     @ManyToOne(cascade = CascadeType.PERSIST)

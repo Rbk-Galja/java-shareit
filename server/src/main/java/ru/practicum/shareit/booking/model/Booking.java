@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
@@ -46,7 +45,6 @@ public class Booking {
     User booker;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
     Status status;
 
 }

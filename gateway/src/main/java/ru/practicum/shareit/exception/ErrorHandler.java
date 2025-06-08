@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
 
@@ -22,6 +23,13 @@ public class ErrorHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<String> handleNotValid(final ConstraintViolationException ex) {
         return response("Указаны некорректные данные", ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ErrorResponse handleServerError(final Throwable e) {
+        log.info("500 {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Ошибка работы сервера");
     }
 
     private static String createJson(String message, String reason) {

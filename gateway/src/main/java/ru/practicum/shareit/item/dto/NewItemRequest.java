@@ -9,11 +9,9 @@ import lombok.Data;
 @Builder
 public class NewItemRequest {
     @NotBlank(message = "название не должно быть пустым")
-    @NotNull
     private String name;
 
     @NotBlank(message = "описание не должно быть пустым")
-    @NotNull
     private String description;
 
     @NotNull(message = "не установлен статус доступности для бронирования")

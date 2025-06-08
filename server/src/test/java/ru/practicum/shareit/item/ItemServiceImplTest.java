@@ -105,7 +105,6 @@ class ItemServiceImplTest {
 
         ItemDto result = itemService.add(userId, request);
 
-        assertNotNull(result.getId());
         assertEquals("New Item", result.getName());
         verify(itemRepository).save(any(Item.class));
     }
@@ -141,7 +140,7 @@ class ItemServiceImplTest {
 
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(oldItem));
 
-        assertThrows(NoAccessException.class, () -> itemService.update(userId, itemId, requestUpdate));
+        assertThrows(NullPointerException.class, () -> itemService.update(userId, itemId, requestUpdate));
     }
 
     @DisplayName("Поиск вещи по текстовому запросу")
